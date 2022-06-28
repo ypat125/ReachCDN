@@ -19,12 +19,12 @@ if (req.status == 404) {
 
     axios.post('https://linkrotbot.uc.r.appspot.com/mappings/get_redirect', {
         referrer: document.referrer,
-        //       URL: document.location.href,
-        URL: "https://www.madhappy.com/collections/accessories/products/classics-dad-hat?variant=39329359396975"
+        URL: document.location.href,
+        // URL: "https://www.madhappy.com/collections/accessories/products/classics-dad-hat?variant=39329359396975"
     })
         .then(function (response) {
-            //       location.href = response.data.url + "?reason=" + response.data.reason;
-            location.href = "https://linkrotbottest.myshopify.com/" + "?reason=" + response.data.reason;
+            location.href = response.data.url + "?reason=" + response.data.reason;
+            // location.href = "https://linkrotbottest.myshopify.com/" + "?reason=" + response.data.reason;
         })
         .catch(function (error) {
             console.log(error);
