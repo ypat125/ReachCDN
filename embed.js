@@ -5,7 +5,7 @@ var req = new XMLHttpRequest();
 req.open('GET', document.location, false);
 req.send(null);
 
-if (req.status == 404) {
+if (req.status == 404 && reason != "redirects not enabled") {
     Toastify({
         text: "This site no longer exists. Redirecting now.",
         duration: 10000,
@@ -27,11 +27,14 @@ if (req.status == 404) {
             location.href = response.data.url + "?reason=" + response.data.reason;
             // location.href = "https://linkrotbottest.myshopify.com/" + "?reason=" + response.data.reason;
         }
+        else {
+            location.href = document.location.href + "?reason=" + response.data.reason;
+        }
         })
         .catch(function (error) {
             console.log(error);
         });
-} else if (reason) {
+} else if (reason && reason != "redirects not enabled") {
     Toastify({
         text: reason,
         duration: 3000,
