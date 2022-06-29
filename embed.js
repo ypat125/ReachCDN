@@ -1,7 +1,9 @@
 const urlParams = new URLSearchParams(window.location.search);
 const reason = urlParams.get('reason')
 
-if (reason != "redirects not enabled") {
+if (reason == "redirects not enabled") {
+    console.log("redirects disabled")
+} else {
     var req = new XMLHttpRequest();
     req.open('GET', document.location, false);
     req.send(null);
