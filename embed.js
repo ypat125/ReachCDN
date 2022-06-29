@@ -7,7 +7,7 @@ req.send(null);
 
 if (req.status == 404) {
     Toastify({
-        text: "This site no longer exists. Redirecting now.",
+        text: "This page no longer exists. Redirecting now.",
         duration: 10000,
         gravity: "top",
         position: "center",
