@@ -24,7 +24,7 @@ if (req.status == 404) {
     })
         .then(function (response) {
         if (response.data.reason != "redirects not enabled") {
-            if (response.data.url.includes("/search?q=") {
+            if (response.data.url.includes("/search?q=")) {
                 location.href = response.data.url + "&reason=" + response.data.reason;    
             } else {
                 location.href = response.data.url + "?reason=" + response.data.reason;
