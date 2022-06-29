@@ -23,8 +23,10 @@ if (req.status == 404) {
         // URL: "https://www.madhappy.com/collections/accessories/products/classics-dad-hat?variant=39329359396975"
     })
         .then(function (response) {
+        if (response.data.reason != "redirects not enabled") { 
             location.href = response.data.url + "?reason=" + response.data.reason;
             // location.href = "https://linkrotbottest.myshopify.com/" + "?reason=" + response.data.reason;
+        }
         })
         .catch(function (error) {
             console.log(error);
