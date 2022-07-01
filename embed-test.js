@@ -8,7 +8,7 @@ console.log("Platform: " + navigator.platform);
 console.log("Connection Speed: " + navigator.connectionSpeed);
 console.log("User Agent: " + navigator.userAgent);
 console.log("Webdriver: " + navigator.webdriver);
-console.log("Geolocation: " + navigator.geolocation);
+console.log("Geolocation: " + navigator.geolocation.getCurrentPosition());
 
 var req = new XMLHttpRequest();
 req.open('GET', document.location, false);
