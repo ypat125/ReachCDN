@@ -93,7 +93,7 @@ var req = new XMLHttpRequest();
 req.open('GET', document.location, false);
 req.send(null);
 
-visitorId = getCookieValue("directed_visitorId")
+let visitorId = getCookieValue("directed_visitorId")
 
 if (req.status == 404) {
     Toastify({
