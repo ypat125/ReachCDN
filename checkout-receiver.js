@@ -23,16 +23,29 @@ if (hasDirectedUid()) {
 
     visitorId = getCookieValue("directed_visitorId")
 
-    const options = {
-        method: 'POST', url: `${BACKEND_ENDPOINT}analytics/checkoutSuccess`,
-        headers: { 'Content-Type': 'application/json' },
-        data: {
-            visitorId: visitorId,
-            site: SITE,
-            order: checkout_data
-        }
-    }
-    axios.request(options).then((response) => {
-        console.log(response.status)
-    })
+    const request = new Request(
+        `${BACKEND_ENDPOINT}analytics/checkoutSuccess`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                visitorId: visitorId,
+                site: SITE,
+                order: checkout_data
+            })
+        });
+
+    fetch(request)
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                throw new Error('Something went wrong!');
+            }
+        })
+        .then(response => {
+            console.debug(response);
+        }).catch(error => {
+            console.error(error);
+        });
 }
