@@ -1,54 +1,57 @@
-// VISITOR LOGIC
+var engine = new Liquid();
+var tpl = engine.parse('{{ line_items }}');
 
-const BACKEND_ENDPOINT = "https://linkrotbot.uc.r.appspot.com/"
-const SITE = window.location.hostname
+// // VISITOR LOGIC
 
-const getCookieValue = (name) => (
-    document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
-)
+// const BACKEND_ENDPOINT = "https://linkrotbot.uc.r.appspot.com/"
+// const SITE = window.location.hostname
 
-const hasDirectedUid = () => (
-    getCookieValue("directed_visitorId") !== ""
-)
+// const getCookieValue = (name) => (
+//     document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+// )
 
-if (hasDirectedUid()) {
-    // Save Checkout
+// const hasDirectedUid = () => (
+//     getCookieValue("directed_visitorId") !== ""
+// )
 
-    visitorId = getCookieValue("directed_visitorId")
+// if (hasDirectedUid()) {
+//     // Save Checkout
 
-    let order = {
-        line_items: [],
-        order_id: "",
-        order_number: ""
-    }
+//     visitorId = getCookieValue("directed_visitorId")
 
-    {% for line_item in line_items %}
-    let obj = {}
-    obj.product_url = "{{ line_item.product.url }}";
-    obj.product_price = "{{ line_item.product.price }}";
-    obj.product_quantity = "{{ line_item.quantity }}";
-    obj.selected_variant = "{{ line_item.product.selected_variant }}";
-    obj.product_type = "{{ line_item.product.type }}";
-    obj.product_id = "{{ line_item.product_id }}"
-    obj.sku = "{{ line_item.sku }}";
-    obj.title = "{{ line_item.title }}";
+//     let order = {
+//         line_items: [],
+//         order_id: "",
+//         order_number: ""
+//     }
 
-    order.line_items.push(obj);
-    {% endfor %}
+//     {% for line_item in line_items %}
+//     let obj = {}
+//     obj.product_url = "{{ line_item.product.url }}";
+//     obj.product_price = "{{ line_item.product.price }}";
+//     obj.product_quantity = "{{ line_item.quantity }}";
+//     obj.selected_variant = "{{ line_item.product.selected_variant }}";
+//     obj.product_type = "{{ line_item.product.type }}";
+//     obj.product_id = "{{ line_item.product_id }}"
+//     obj.sku = "{{ line_item.sku }}";
+//     obj.title = "{{ line_item.title }}";
 
-    order.order_id = "{{ order_id }}";
-    order.order_number = "{{ order_number }}";
+//     order.line_items.push(obj);
+//     {% endfor %}
 
-    const options = {
-        method: 'POST', url: `${BACKEND_ENDPOINT}analytics/checkoutSuccess`,
-        headers: { 'Content-Type': 'application/json' },
-        data: {
-            visitorId: visitorId,
-            site: SITE,
-            order: order
-        }
-    }
-    axios.request(options).then((response) => {
-        console.log(response.status)
-    })
-}
+//     order.order_id = "{{ order_id }}";
+//     order.order_number = "{{ order_number }}";
+
+//     const options = {
+//         method: 'POST', url: `${BACKEND_ENDPOINT}analytics/checkoutSuccess`,
+//         headers: { 'Content-Type': 'application/json' },
+//         data: {
+//             visitorId: visitorId,
+//             site: SITE,
+//             order: order
+//         }
+//     }
+//     axios.request(options).then((response) => {
+//         console.log(response.status)
+//     })
+// }
