@@ -5,36 +5,34 @@ document.currentScript = document.currentScript || (function () {
 
 let checkout_data = document.currentScript.getAttribute('data');
 
-console.log(checkout_data);
+// VISITOR LOGIC
 
-// // VISITOR LOGIC
+const BACKEND_ENDPOINT = "https://linkrotbot.uc.r.appspot.com/"
+const SITE = window.location.hostname
 
-// const BACKEND_ENDPOINT = "https://linkrotbot.uc.r.appspot.com/"
-// const SITE = window.location.hostname
+const getCookieValue = (name) => (
+    document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+)
 
-// const getCookieValue = (name) => (
-//     document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
-// )
+const hasDirectedUid = () => (
+    getCookieValue("directed_visitorId") !== ""
+)
 
-// const hasDirectedUid = () => (
-//     getCookieValue("directed_visitorId") !== ""
-// )
+if (hasDirectedUid()) {
+    // Save Checkout
 
-// if (hasDirectedUid()) {
-//     // Save Checkout
+    visitorId = getCookieValue("directed_visitorId")
 
-//     visitorId = getCookieValue("directed_visitorId")
-
-//     const options = {
-//         method: 'POST', url: `${BACKEND_ENDPOINT}analytics/checkoutSuccess`,
-//         headers: { 'Content-Type': 'application/json' },
-//         data: {
-//             visitorId: visitorId,
-//             site: SITE,
-//             order: order
-//         }
-//     }
-//     axios.request(options).then((response) => {
-//         console.log(response.status)
-//     })
-// }
+    const options = {
+        method: 'POST', url: `${BACKEND_ENDPOINT}analytics/checkoutSuccess`,
+        headers: { 'Content-Type': 'application/json' },
+        data: {
+            visitorId: visitorId,
+            site: SITE,
+            order: checkout_data
+        }
+    }
+    axios.request(options).then((response) => {
+        console.log(response.status)
+    })
+}
