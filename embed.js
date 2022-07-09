@@ -4,8 +4,8 @@ toastifyCSS.setAttribute('type', 'text/css');
 toastifyCSS.setAttribute('href', 'https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css');
 
 var toastifyJS = document.createElement('script');
-toastifyCSS.setAttribute('type', 'text/javascript');
-toastifyCSS.setAttribute('src', 'https://cdn.jsdelivr.net/npm/toastify-js');
+toastifyJS.setAttribute('type', 'text/javascript');
+toastifyJS.setAttribute('src', 'https://cdn.jsdelivr.net/npm/toastify-js');
 
 document.head.appendChild(toastifyCSS);
 document.head.appendChild(toastifyJS);
