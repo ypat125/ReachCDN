@@ -1,3 +1,4 @@
+// INSERT TOAST DEPENDENCIES
 var toastifyCSS = document.createElement('link');
 toastifyCSS.setAttribute('rel', 'stylesheet');
 toastifyCSS.setAttribute('type', 'text/css');
