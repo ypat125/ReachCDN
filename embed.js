@@ -1,3 +1,15 @@
+var toastifyCSS = document.createElement('link');
+toastifyCSS.setAttribute('rel', 'stylesheet');
+toastifyCSS.setAttribute('type', 'text/css');
+toastifyCSS.setAttribute('href', 'https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css');
+
+var toastifyJS = document.createElement('script');
+toastifyCSS.setAttribute('type', 'text/javascript');
+toastifyCSS.setAttribute('src', 'https://cdn.jsdelivr.net/npm/toastify-js');
+
+document.head.appendChild(toastifyCSS);
+document.head.appendChild(toastifyJS);
+
 // VISITOR LOGIC
 
 const BACKEND_ENDPOINT = "https://linkrotbot.uc.r.appspot.com/"
@@ -24,60 +36,95 @@ const cyrb53 = function (str, seed = 0) {
 };
 
 const handlePageRequest = (visitorId, pageUrl, wasRedirect, is404) => {
-    console.log("making pge request")
-    const options = {
-        method: 'POST', url: `${BACKEND_ENDPOINT}analytics/pageRequest`,
-        headers: { 'Content-Type': 'application/json' },
-        data: {
-            visitorId: visitorId,
-            pageUrl: pageUrl,
-            site: SITE,
-            wasRedirect: wasRedirect,
-            is404: is404
-        }
-    }
-    axios.request(options).then((response) => {
-        console.log(response.status)
-    })
+    const request = new Request(
+        `${BACKEND_ENDPOINT}analytics/pageRequest`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                visitorId: visitorId,
+                pageUrl: pageUrl,
+                site: SITE,
+                wasRedirect: wasRedirect,
+                is404: is404
+            })
+        });
+
+    fetch(request)
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                throw new Error('Something went wrong!');
+            }
+        })
+        .then(response => {
+            console.debug(response);
+        }).catch(error => {
+            console.error(error);
+        });
 }
 
 const uploadMetadata = (visitorId, metadata) => {
-    const options = {
-        method: 'POST', url: `${BACKEND_ENDPOINT}analytics/metadata`,
-        headers: { 'Content-Type': 'application/json' },
-        data: {
-            visitorId: visitorId,
-            metadata: metadata,
-        }
-    }
-    axios.request(options).then((response) => {
-        console.log(response.status)
-    })
+    const request = new Request(
+        `${BACKEND_ENDPOINT}analytics/metadata`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                visitorId: visitorId,
+                metadata: metadata
+            })
+        });
+
+    fetch(request)
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                throw new Error('Something went wrong!');
+            }
+        })
+        .then(response => {
+            console.debug(response);
+        }).catch(error => {
+            console.error(error);
+        });
 }
 
 const handleNewVisitor = () => {
-    const options = { method: 'GET', url: 'https://www.cloudflare.com/cdn-cgi/trace' };
-    axios.request(options).then((response) => {
-        const ipStart = response.data.search(/ip=[a-z0-9:].+/g) + 3
-        const ip = response.data.substring(ipStart, ipStart + 39)
-        metadata = {
-            "cookieEnabled": navigator.cookieEnabled,
-            "language": navigator.language,
-            "platform": navigator.platform,
-            "connectionSpeed": navigator.connectionSpeed,
-            "userAgent": navigator.userAgent,
-            "webdriver": navigator.webdriver,
-            "ip": ip
-        }
-        hash = cyrb53(JSON.stringify(metadata))
-        document.cookie = `directed_visitorId = ${hash}; max-age = ${2 * 365 * 24 * 60 * 60}}`
-        uploadMetadata(hash, metadata)
-        handlePageRequest(hash, window.location.href)
+    const request = new Request("https://www.cloudflare.com/cdn-cgi/trace", { method: 'GET' });
 
-    }).catch(function (error) {
-        console.error(error);
-        document.cookie = `directed_visitorId = FAILED; max-age = ${2 * 365 * 24 * 60 * 60}}`
-    });
+    fetch(request)
+        .then(response => {
+            if (response.status === 200) {
+                let resp = response.text;
+
+                const ipStart = resp.search(/ip=[a-z0-9:].+/g) + 3
+                const ip = resp.substring(ipStart, ipStart + 39)
+                metadata = {
+                    "cookieEnabled": navigator.cookieEnabled,
+                    "language": navigator.language,
+                    "platform": navigator.platform,
+                    "connectionSpeed": navigator.connectionSpeed,
+                    "userAgent": navigator.userAgent,
+                    "webdriver": navigator.webdriver,
+                    "ip": ip
+                }
+                hash = cyrb53(JSON.stringify(metadata))
+                document.cookie = `directed_visitorId = ${hash}; max-age = ${2 * 365 * 24 * 60 * 60}}`
+                uploadMetadata(hash, metadata)
+                handlePageRequest(hash, window.location.href)
+            } else {
+                throw new Error('Something went wrong!');
+            }
+        })
+        .then(response => {
+            console.debug(response);
+        }).catch(error => {
+            console.error(error);
+            document.cookie = `directed_visitorId = FAILED; max-age = ${2 * 365 * 24 * 60 * 60}}`
+        });
 }
 
 if (!hasDirectedUid()) {
@@ -111,21 +158,37 @@ if (req.status == 404) {
         handlePageRequest(visitorId, window.location.href, false, true);
     }
 
-    axios.post(`${BACKEND_ENDPOINT}mappings/get_redirect`, {
-        referrer: document.referrer,
-        URL: document.location.href,
-    })
-        .then(function (response) {
-            if (response.data.reason != "redirects not enabled") {
-                if (response.data.url.includes("/search?q=")) {
-                    location.href = response.data.url + "&reason=" + response.data.reason;
-                } else {
-                    location.href = response.data.url + "?reason=" + response.data.reason;
+    const request = new Request(
+        `${BACKEND_ENDPOINT}mappings/get_redirect`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                referrer: document.referrer,
+                URL: document.location.href
+            })
+        });
+
+    fetch(request)
+        .then(response => {
+            if (response.status === 200) {
+                let resp = response.json();
+
+                if (resp.reason != "redirects not enabled") {
+                    if (resp.url.includes("/search?q=")) {
+                        location.href = resp.url + "&reason=" + resp.reason;
+                    } else {
+                        location.href = resp.url + "?reason=" + resp.reason;
+                    }
                 }
+            } else {
+                throw new Error('Something went wrong!');
             }
         })
-        .catch(function (error) {
-            console.log(error);
+        .then(response => {
+            console.debug(response);
+        }).catch(error => {
+            console.error(error);
         });
 } else if (reason) {
     Toastify({
